@@ -1,0 +1,87 @@
+%实验三的运行结果,n表示每组数据的大小,分别为10或者100
+function Res(n)
+%clc;
+if nargin == 0
+  n = 10; %%默认参数等于10
+end
+%产生数据集
+[x y] = getData(n);
+bias = zeros(100,1);
+variame =bias;
+%F(x) = x^2
+%------------------------处理g(x) =0.5-------------------------------%
+bias = mean(0.5-x.^2,2);%对g(x) =0.5来说，期望=0.5；
+variame = 0*variame;%对g(x) =0.5来说，方差=0；
+Error = bias.^2 + variame;%均方误差
+fprintf('n=%d,g(x)=0.5时,偏差均值为：%f\t方差均值为：%f\n',n,mean(bias,1),mean(variame,1));
+figure(1);
+hist(Error);
+title('g(x)=0.5时的均方误差直方图');
+figure(11);
+xb=1:100;
+plot(xb,bias,'r+ -',xb,variame,'k* :');
+legend('Bias','Variame',1); 
+title('g(x)=0.5时 偏差和方差的变化曲线');
+
+%------------------------处理g(x) =1.0-------------------------------%
+bias = mean(1.0-x.^2,2);%对g(x) =1.0来说，期望=1.0；
+variame = 0*variame;%对g(x) =0.5来说，方差=0；
+Error = bias.^2 + variame;%均方误差
+fprintf('n=%d,g(x)=1.0时,偏差均值为：%f\t方差均值为：%f\n',n,mean(bias,1),mean(variame,1));
+figure(2);
+hist(Error);
+title('g(x)=1.0时的均方误差直方图');
+figure(21);
+plot(xb,bias,'r+ -',xb,variame,'k* :');
+legend('Bias','Variame',1); 
+title('g(x)=1.0时 偏差和方差的变化曲线');
+
+%------------------------处理g(x)=a0+a1*x-------------------------------%
+%需先用LSE算法求出最优的a0 a1的值
+a = zeros(100,2);%要求的参数
+gx = zeros(100,n);%求出的回归方程所计算得到的值
+for i = 1:100
+      a(i, :) = polyfit(x(i,:), y(i,:), 1);%matlab自带的线性回归函数
+      for j = 1:n
+        gx(i,j)=a(i,2)+a(i,1)*x(i,j);
+      end
+end
+
+bias = mean(gx-x.^2,2);%偏差；
+for i=1:100
+   variame(i) = var(gx(i,:),1);%方差； 
+end
+Error = bias.^2 + variame;%均方误差
+fprintf('n=%d,g(x)=a0 + a1*x时,偏差均值为：%f\t方差均值为：%f\n',n,mean(bias,1),mean(variame,1));
+figure(3);
+hist(Error);
+title('g(x)=a0 + a1*x 时的均方误差直方图');
+figure(31);
+plot(xb,bias,'r+ -',xb,variame,'k* :');
+legend('Bias','Variame',1); 
+title('g(x)=a0 + a1*x时 偏差和方差的变化曲线');
+
+%------------------处理g(x)=a0+a1*x+a2*x^2+a3*x^3----------------------%
+%需先用LSE算法求出最优的a0 a1 a2 a3的值
+a = zeros(100,4);%要求的参数
+gx = zeros(100,n);%求出的回归方程所计算得到的值
+for i = 1:100
+      a(i, :) = polyfit(x(i,:), y(i,:), 3);%matlab自带的线性回归函数
+      for j = 1:n
+        gx(i,j)=a(i,4)+a(i,3)*x(i,j)+a(i,2)*x(i,j)^2+a(i,1)*x(i,j)^3;
+      end
+end
+
+bias = mean(gx-x.^2,2);%偏差；
+for i=1:100
+   variame(i) = var(gx(i,:),1);%方差； 
+end
+Error = bias.^2 + variame;%均方误差
+fprintf('n=%d,g(x)=a0+a1*x+a2*x^2+a3*x^3时,偏差均值为：%f\t方差均值为：%f\n',n,mean(bias,1),mean(variame,1));
+figure(4);
+hist(Error);
+title('g(x)=a0+a1*x+a2*x^2+a3*x^3 时的均方误差直方图');
+figure(41);
+plot(xb,bias,'r+ -',xb,variame,'k* :');
+legend('Bias','Variame',1); 
+title('g(x)=a0+a1*x+a2*x^2+a3*x^3时 偏差和方差的变化曲线');

@@ -1,0 +1,39 @@
+%DPDR函数的重建误差，,train为训练集，test为测试集， err为分类正确率,使用QR分解
+function reErr =DPDRerr(train,test,f)
+%--------------------------避免维数灾难，先用PCA降维-----------------------%
+tmean = mean(train,2); %训练集的均值
+ts = (train - repmat(tmean,1,200))'*(train - repmat(tmean,1,200));%训练集的散布矩阵
+[p,la,exp] = PCACOV(ts);
+for i=1:200
+    if(sum(exp(1:i,:)) > 85); %当能量占到85%时，退出
+        id = i;
+        break;
+    end
+end
+w = pinv(train')*p(:, 1:id);
+train = w'*train;%降维后训练集
+test = w'*test;%降维后测试集
+
+label = ones(1,5);
+for i=2:40
+   label =[label,ones(1,5)*i]; %每一类的标记，也就是在训练集上的测试效果
+end
+%-------------------------------QR分解---------------------------------%
+[Q R] = qr(train); %不采用PCA降维，则内存溢出。。
+
+%----------------------------------分类------------------------------------%
+pTrain = Q'*train;
+pTest = Q'*test;
+y = zeros(200,1);%输出结果，用来构造投影矩阵M*train' = y;
+for i=1:200
+    dis = pdist2(pTrain',pTest(:,i)');
+    idex = find(dis == min(dis));
+    y(i) = idex;
+end
+M = label*pinv(pTrain);%%投影矩阵
+reSet = pinv(M)*y';%%获得重建的矩阵
+reErr = norm(reSet-pTest)/(norm(reSet)+norm(pTest));
+
+if nargin == 3 && f==1
+    
+end

@@ -1,0 +1,3 @@
+%给定的度量函数
+function dis = BetaDistance(data,center,beta)
+dis = pdist2(data(i,:),center,'Euclidean');%欧式距离度量

@@ -1,0 +1,23 @@
+%算法4，固定增量单样本感知器算法;
+function w = FixISSPerceptron(trainData,testData)
+%先用训练集训练参数w
+w = [0.1,0,0,0,0]';%w是增广权向量，为n+1维
+
+m=find( (trainData*w) < 0 );%求出分错的数据
+err = trainData(m,:);%分错的数据
+jp = length(err);%分错的数量
+max = 10000;%最大迭代次数
+idex =1;
+%----------------------训练出W-------------------------%
+while (jp > 0) && (idex < max) %不满足条件
+    idex = idex +1;
+    
+    w = w + deta';
+    m=find( (trainData*w) < 0 );%求出分错的数据
+    err = trainData(m,:);%分错的数据
+    jp = length(err);%分错的数量
+    
+    if(idex == max)
+        disp('time over!');
+    end
+end

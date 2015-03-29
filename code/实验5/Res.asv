@@ -1,0 +1,60 @@
+%实验5的运行结果，第一个参数为1表示K-means，否则FCM，第二个参数选择数据中心，有1 2 3 4
+%四个选项，对应四问，第三参数不填则为欧式距离，填则为给定度量的参数beta值
+function Res(ForK,s,beta)
+clc;
+data = [-7.82 -6.68 4.36 6.72 -8.64 -6.87 4.47 6.73 -7.71 -6.91 6.18 6.72 -6.25 -6.94 8.09 6.81 -5.19 -6.38 4.08 6.27;
+        -4.58 3.16 -2.19 0.88 3.06 .057 -2.62 -2.01 2.34 -0.49 2.81 -0.93 -0.26 -1.22 0.20 0.17 4.24 -1.74 1.30 0.93;
+        -3.97 2.71 2.09 2.80 3.50 -5.45 5.76 4.18 -6.33 -5.68 5.82 -4.04 0.56 1.13 2.25 -4.15 4.04 1.43 5.33 -2.78]';%分类数据
+centera =[1 1 1;-1 1 -1];
+centerb =[0 0 0;1 1 -1];
+centerc =[0 0 0;1 1 1;-1 0 2];
+centerd =[-0.1 0 0.1;0 -0.1 0.1;-0.1 -0.1 0.1];
+%-------------------------调用函数------------------------%
+switch s
+    case 1
+        center = centera;
+    case 2
+        center = centerb;
+    case 3
+        center = centerc;
+    otherwise
+        center = centerd;
+end
+
+if ForK == 1
+    if nargin == 2 
+        disp('采用');
+        [res center]=Kmeans(data,center);
+    else
+        [res center]=Kmeans(data,center,beta);
+    end
+else
+    if nargin == 2 
+        [res center]=FCM(data,center);
+    else
+        [res center]=FCM(data,center,beta);
+    end
+end
+
+[k len] = size(center);
+if k == 2
+    fprintf('分类中心为：');
+    center
+    fprintf('第一类的数据有：');
+    res{1,1}
+    fprintf('第二类的数据有：');
+    res{2,1}
+    fprintf('未分开的数据有：');
+    res{3,1}
+elseif k == 3
+    fprintf('分类中心为：');
+    center
+    fprintf('第一类的数据有：');
+    res{1,1}
+    fprintf('第二类的数据有：');
+    res{2,1}
+    fprintf('第三类的数据有：');
+    res{3,1}
+    fprintf('未分开的数据有：');
+    res{4,1}
+end

@@ -1,0 +1,5 @@
+%fisher 判别函数 
+%由w=S^(-1)(m1-m2)可以得到判别方向
+function w =FLDA(x1,x2)
+m1 = mean(x1);
+m2 = mean(x2);

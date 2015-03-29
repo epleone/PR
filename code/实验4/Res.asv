@@ -1,0 +1,42 @@
+%实验4的运行结果
+function Res()
+clc;clear;
+k=1;
+err =linspace(0,0,10) ;%错误率
+
+for i=1:5%
+    [Dtest Dtrain Dval]=getData();
+    %--------------------------在训练集上-------------------------%
+    %所有k的结果
+    while k<20
+        err((k+1)/2) = Train(Dtest,Dtrain,k);
+        k = k+2;
+    end
+    %kmax=find(err==max(err))*2-1;%全局最优
+    %kmin=find(err==min(err))*2-1;%全局最优
+    kmax=find(err>err(1))*2-1;%局部最优
+    kmin=find(err<err(1))*2-1;%局部最优
+    if length(kmax)==0
+        kmax =1;
+    else
+        kmax = kmax(1);%保证只取到一个值
+    end
+    if length(kmin)==0
+        kmin =1;
+    else
+        kmin = kmin(1);%保证只取到一个值
+    end
+
+    %--------------------------在测试集上-------------------------%
+    maxErr = Train(Dtest,Dval,kmax);%最差的k在测试集上的错误率
+    minErr = Train(Dtest,Dval,kmin);%最好的k在测试集上的错误率
+    fprintf('第%d次的最差的k=%d   错误率为%f   最好的k=%d   错误率为%f\n',i,kmax,maxErr,kmin,minErr);
+    k=1;
+    %pause(1);%延时1秒
+end
+
+%-----------------------画出不同的k在测试集和训练集上的误差---------------------------%
+
+for k
+
+

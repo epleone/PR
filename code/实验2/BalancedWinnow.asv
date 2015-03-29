@@ -1,0 +1,39 @@
+%算法7，平衡winnow算法
+function errNum = BalancedWinnow(trainData,testData)
+wp = [1,1,1,1,1]'/2;%正的权向量
+wm = -wp;%负的权向量
+alpha = 2;%可以调整的值，alpha>1
+
+len = 1;
+max = 10000;
+idex = 1;
+
+while len>0 && idex < max
+    idex = idex+1;
+    
+    for i=1:50
+        
+        if m(i)<26
+            for j=1:5
+                y = trainData(m(i),j);
+                wp(j) = alpha^y*wp(j);
+                wm(j) = alpha^(-y)*wm(j);
+            end
+        elseif m(i)>25
+            for j=1:5
+                y = trainData(m(i),j);
+                wm(j) = alpha^y*wm(j);
+                wp(j) = alpha^(-y)*wp(j);
+            end
+        end
+        
+    end
+    
+    m=find( (trainData*wp -trainData*wm) < 0 );%求出分错的数据
+    len = length(m);
+end
+
+wp
+wm
+%---------------------计算在测试集的正确率----------------------%
+ errNum = length(find((testData*wp-testData*wm)<0));
